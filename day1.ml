@@ -15,19 +15,19 @@ let modulo x y =
   if r >= 0 then r else r + y
 
 (* Part 1 *)
-let rec solve_all_part_1 lines cur =
+let rec solve_all_part_1 lines cur acc =
   match lines with
-  | [] -> 0
+  | [] -> acc
   | h :: t ->
       let dx = read_ops h in
       let after = modulo (cur + dx) 100 in
       let cnt = match after with 0 -> 1 | _ -> 0 in
-      cnt + solve_all_part_1 t after
+      solve_all_part_1 t after (acc + cnt)
 
 (* Part 2 *)
-let rec solve_all_part_2 lines cur =
+let rec solve_all_part_2 lines cur acc =
   match lines with
-  | [] -> 0
+  | [] -> acc
   | h :: t ->
       let dx = read_ops h in
       let dest = cur + dx in
@@ -37,13 +37,13 @@ let rec solve_all_part_2 lines cur =
         else if dest >= 100 then dest / 100
         else 0
       in
-      cnt + solve_all_part_2 t after
+      solve_all_part_2 t after (acc + cnt)
 
 (* Driver *)
 let () =
   let lines = read_lines "day1.in" in
-  let ans1 = solve_all_part_1 lines 50 in
+  let ans1 = solve_all_part_1 lines 50 0 in
   printf "Part 1 = %d\n" ans1;
-  let ans2 = solve_all_part_2 lines 50 in
+  let ans2 = solve_all_part_2 lines 50 0 in
   printf "Part 2 = %d\n" ans2;
   ()
