@@ -12,6 +12,8 @@ let read_ids s =
   let ranges = String.split_on_char ',' s in
   List.map (fun r -> sscanf r "%Ld-%Ld" (fun a b -> (a, b))) ranges
 
+let ( ++ ) a b = Int64.add a b
+
 (* Part 1 *)
 let solve_all_part_1 lines =
   let ranges = read_ids (List.hd lines) in
@@ -25,17 +27,16 @@ let solve_all_part_1 lines =
             let s = Int64.to_string a in
             let l = String.length s in
             let delta =
-              if l mod 2 == 1 then 0L
+              if l mod 2 = 1 then 0L
               else
                 let s1 = String.sub s 0 (l / 2) in
                 let s2 = String.sub s (l / 2) (l / 2) in
-                let eq = String.equal s1 s2 in
-                if eq then a else 0L
+                if s1 = s2 then a else 0L
             in
-            count (Int64.add a 1L) b (Int64.add cnt delta)
+            count (a ++ 1L) b (cnt ++ delta)
         in
         let c = count x y 0L in
-        solve t (Int64.add acc c)
+        solve t (acc ++ c)
   in
   solve ranges 0L
 
@@ -55,22 +56,22 @@ let solve_all_part_2 lines =
             let l = String.length s in
             let delta =
               let rec check k =
-                if k * 2 > l then false
+                if k * 2 > l then 0L
                 else if
-                  l mod k == 0
+                  l mod k = 0
                   &&
                   let block = String.sub s 0 k in
                   let rep = repeat (l / k) block in
-                  String.equal s rep
-                then true
+                  s = rep
+                then a
                 else check (k + 1)
               in
-              if check 1 then a else 0L
+              check 1
             in
-            count (Int64.add a 1L) b (Int64.add cnt delta)
+            count (a ++ 1L) b (cnt ++ delta)
         in
         let c = count x y 0L in
-        solve t (Int64.add acc c)
+        solve t (acc ++ c)
   in
   solve ranges 0L
 
