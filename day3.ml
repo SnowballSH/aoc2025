@@ -26,8 +26,8 @@ let lindex x arr =
 
 let rindex x rarr =
   let n = List.length rarr in
-  let arr = List.rev rarr in
-  n - 1 - lindex x arr
+  let rn = rarr |> List.rev |> lindex x in
+  n - 1 - rn
 
 (* Part 1 *)
 let solve_all_part_1 all_lines =
@@ -38,15 +38,14 @@ let solve_all_part_1 all_lines =
         let nums = read_joltage line in
         (* solve the problem for nums *)
         (* this solution is O(2n + 100) = O(n), where n = |nums| *)
-        let li = Array.init 10 (fun i -> lindex (9 - i) nums) in
-        let ri = Array.init 10 (fun i -> rindex (9 - i) nums) in
+        let li = (fun i -> lindex (9 - i) nums) |> Array.init 10 in
+        let ri = (fun i -> rindex (9 - i) nums) |> Array.init 10 in
         let rec help a =
           let l = li.(9 - a) in
           let r = Array.find_index (fun j -> j > l) ri in
           match r with Some j -> (10 * a) + (9 - j) | None -> help (a - 1)
         in
-        let ans = help 9 in
-        solve tail (acc + ans)
+        acc + help 9 |> solve tail
   in
   solve all_lines 0
 
@@ -81,12 +80,9 @@ let solve_all_part_2 all_lines =
         let rec build digits acc =
           match digits with
           | [] -> acc
-          | h :: t ->
-              let new_acc = Int64.of_int h ++ Int64.mul 10L acc in
-              build t new_acc
+          | h :: t -> Int64.of_int h ++ Int64.mul 10L acc |> build t
         in
-        let ans = build seq 0L in
-        solve tail (acc ++ ans)
+        acc ++ build seq 0L |> solve tail
   in
   solve all_lines 0L
 
