@@ -14,7 +14,9 @@ let ( ++ ) a b = Int64.add a b
 let ( -- ) a b = Int64.sub a b
 
 (* Part 1 *)
-let solve_all_part_1 all_lines =
+
+(* Brute force O(nm) *)
+(* let solve_all_part_1 all_lines =
   let rec ranges rem acc =
     match rem with
     | [] -> (rem, acc)
@@ -36,9 +38,57 @@ let solve_all_part_1 all_lines =
         let ok = count_occ (read_int h) rng in
         solve t (acc + Bool.to_int ok)
   in
-  solve remaining_lines 0
+  solve remaining_lines 0 *)
+
+(* Two Pointers, using Part 2 solution *)
+(* O(n log n + m log m) *)
+let solve_all_part_1 all_lines =
+  let rec ranges rem acc =
+    match rem with
+    | [] -> (rem, acc)
+    | "" :: t -> (t, acc)
+    | h :: t -> ranges t (read_range h :: acc)
+  in
+  let remaining_lines, rng = ranges all_lines [] in
+  let rec enumerate l r rem acc =
+    match rem with
+    | [] -> (rem, acc)
+    | h :: t ->
+        if h < l then enumerate l r t acc
+        else if h <= r then enumerate l r t (acc + 1)
+        else (rem, acc)
+  in
+  let rec solve cur rem chk acc =
+    let l1, r1 = cur in
+    match rem with
+    | [] ->
+        let other, cnt = enumerate l1 r1 chk 0 in
+        acc + cnt
+    | nxt :: t ->
+        let l2, r2 = nxt in
+        if l2 > r1 then
+          let other, cnt = enumerate l1 r1 chk 0 in
+          solve nxt t other (acc + cnt)
+        else if r2 > r1 then
+          let other, cnt = enumerate l1 (l2 -- 1L) chk 0 in
+          solve nxt t other (acc + cnt)
+        else solve cur t chk acc
+  in
+  let a =
+    List.sort
+      (fun (a1, b1) (a2, b2) ->
+        match Int64.compare a1 a2 with 0 -> Int64.compare b1 b2 | c -> c)
+      rng
+  in
+  match a with
+  | [] -> 0
+  | h :: t ->
+      let b = List.sort Int64.compare (List.map read_int remaining_lines) in
+      solve h t b 0
 
 (* Part 2 *)
+(* Pretty standard interval covering problem *)
+(* O(n log n) *)
 let solve_all_part_2 all_lines =
   let rec solve cur rem acc =
     let l1, r1 = cur in
