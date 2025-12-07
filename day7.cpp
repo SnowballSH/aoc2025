@@ -58,8 +58,7 @@ int main()
             {
                 dp2[j - 1] += dp[j];
                 if (grid[i + 1][j - 1] != '|')
-                    q.emplace(i + 1, j - 1),
-                        grid[i + 1][j - 1] = '|';
+                    q.emplace(i + 1, j - 1), grid[i + 1][j - 1] = '|';
             }
             if (j < m - 1)
             {
