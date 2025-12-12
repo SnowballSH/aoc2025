@@ -49,13 +49,10 @@ let group_by_separator sep lst =
   in
   match lst with [] -> [] | _ -> aux [] [] lst
 
-let solve_all_part_2 all_lines = 0L
-
 (* Driver *)
 let () =
   let lines = read_lines "day9.in" in
   let ans1 = solve_all_part_1 lines in
   printf "Part 1 = %Ld\n" ans1;
-  let ans2 = solve_all_part_2 lines in
-  printf "Part 2 = %Ld\n" ans2;
+  printf "Part 2 = Solved in C++\n";
   ()
